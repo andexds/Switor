@@ -1,0 +1,7 @@
+{
+  "name": "Switor",
+  "id": "811288323820451882",
+  "api": "1.0.0",
+  "main": "dist/code.js",
+  "ui": "dist/ui.html"
+}

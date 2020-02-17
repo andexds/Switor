@@ -1,1 +1,1 @@
-# Switor
+Switor
