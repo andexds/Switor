@@ -74,6 +74,7 @@ const changeStyleColor = () => {
 
   for (const color of selection) {
     if ('fills' in color) {
+      console.log(color.fills);
       const name = color.name;
       const fills = color.fills;
       const id = styleArray.indexOf(name);

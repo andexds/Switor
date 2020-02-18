@@ -1,6 +1,6 @@
 import { getLocalStyle, createThemeFromStyles, changeStyleColor } from './styles';
 figma.showUI(__html__);
-figma.ui.resize(360, 480);
+figma.ui.resize(360, 456);
 figma.ui.onmessage = msg => {
     if (msg.type === 'create-theme') {
         figma.ui.postMessage({ status: 'update' });

@@ -1,9 +1,10 @@
+* {
+  box-sizing: border-box;
+}
 body {
   font: 12px sans-serif;
   margin: 0;
   padding: 0;
-  height: 480px;
-  width: 360px;
 }
 body::before {
   content: '';
@@ -66,13 +67,27 @@ button {
   color: white;
   justify-self: auto;
 }
-
-input {
-  border: none;
-  outline: none;
-  padding: 8px;
+footer {
+  background: #2C3339;
+  color: #999999;
+  padding: 20px;
+  position: relative;
 }
-input:hover { box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1); }
+a {
+  color:#47A0F4;
+  text-decoration: none;
+}
+a:hover {
+  opacity: 0.5;
+}
+
+footer::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  height: 24px;
+  left: 0px;
+  right: 0px;
+  background: url('./img/pttr-2.svg');
+}
 button:focus { box-shadow: inset 0 0 0 2px #18A0FB; }
-#create:focus { box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.3); }
-input:focus { box-shadow: inset 0 0 0 2px #18A0FB; }
