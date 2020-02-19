@@ -33,6 +33,7 @@ h2 {
 p {
   line-height: 16px;
   margin: 0;
+  margin-top: 4px;
 }
 .steps {
   margin-left: 28px;
@@ -42,7 +43,7 @@ p {
   content: '';
   position: absolute;
   top: 26px;
-  height: 180px;
+  height: 190px;
   left: -28px;
   width: 10px;
   background: url('./img/border.svg');

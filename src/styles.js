@@ -1,7 +1,6 @@
 const getLocalStyle = () => {
     const styleList = figma.getLocalPaintStyles();
     if (styleList.length === 0) {
-        figma.ui.postMessage({ status: 'stylenotexist' });
         return null;
     }
     return styleList;
@@ -15,7 +14,12 @@ const getArrayFromStyles = (styleList) => {
     ;
     return stylesArray;
 };
-const createThemeFromStyles = (nameTheme, styleList) => {
+const createThemeFromStyles = (nameTheme) => {
+    const styleList = getLocalStyle();
+    if (styleList === null) {
+        figma.ui.postMessage({ status: 'stylenotexist' });
+        return;
+    }
     const nodeArray = [];
     let group;
     const fontDidLoad = figma.loadFontAsync({ family: "Roboto", style: "Regular" });
@@ -53,6 +57,10 @@ const createThemeFromStyles = (nameTheme, styleList) => {
 };
 const changeStyleColor = () => {
     const styleList = getLocalStyle();
+    if (styleList === null) {
+        figma.ui.postMessage({ status: 'themenotexist' });
+        return;
+    }
     const styleArray = getArrayFromStyles(styleList);
     const selection = figma.currentPage.selection;
     if (selection.length === 0) {
@@ -62,6 +70,7 @@ const changeStyleColor = () => {
     }
     for (const color of selection) {
         if ('fills' in color) {
+            console.log(color.fills);
             const name = color.name;
             const fills = color.fills;
             const id = styleArray.indexOf(name);

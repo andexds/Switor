@@ -2,7 +2,6 @@ const getLocalStyle = () => {
   const styleList = figma.getLocalPaintStyles();
 
   if (styleList.length === 0) {
-    figma.ui.postMessage({status: 'stylenotexist'});
     return null;
   }
 
@@ -19,7 +18,12 @@ const getArrayFromStyles = (styleList: PaintStyle[]) => {
   return stylesArray;
 };
 
-const createThemeFromStyles = (nameTheme:string, styleList: PaintStyle[]) => {
+const createThemeFromStyles = (nameTheme:string) => {
+  const styleList = getLocalStyle();
+  if (styleList === null) {
+    figma.ui.postMessage({status: 'stylenotexist'});
+    return;
+  }
   const nodeArray: BaseNode[] = [];
   let group: GroupNode;
 
@@ -62,6 +66,10 @@ const createThemeFromStyles = (nameTheme:string, styleList: PaintStyle[]) => {
 };
 const changeStyleColor = () => {
   const styleList = getLocalStyle();
+  if (styleList === null) {
+    figma.ui.postMessage({status: 'themenotexist'});
+    return;
+  }
   const styleArray = getArrayFromStyles(styleList);
 
   const selection = figma.currentPage.selection;
