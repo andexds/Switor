@@ -1,7 +1,7 @@
 
 import { createThemeFromStyles, changeStyleColor } from './components/index';
 figma.showUI(__html__);
-figma.ui.resize(360, 472);
+figma.ui.resize(360, 474);
 
 figma.ui.onmessage = msg => {
   figma.ui.postMessage({status: 'update'});
