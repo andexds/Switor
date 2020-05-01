@@ -1,5 +1,5 @@
 
-import { getLocalStyle, createThemeFromStyles, changeStyleColor } from './styles';
+import { createThemeFromStyles, changeStyleColor } from './components/index';
 figma.showUI(__html__);
 figma.ui.resize(360, 472);
 

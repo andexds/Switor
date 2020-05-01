@@ -1,25 +1,7 @@
-const getLocalStyle = () => {
-  const styleList = figma.getLocalPaintStyles();
-
-  if (styleList.length === 0) {
-    return null;
-  }
-
-  return styleList;
-};
-
-const getArrayFromStyles = (styleList: PaintStyle[]) => {
-  const stylesArray = [];
-  for (const paintStyle of styleList) {
-    const name = paintStyle.name;
-    stylesArray.push(name);
-  };
-
-  return stylesArray;
-};
+import Styles from './styles/Styles';
 
 const createThemeFromStyles = (nameTheme:string) => {
-  const styleList = getLocalStyle();
+  const styleList = Styles.getLocalStyle();
   if (styleList === null) {
     figma.ui.postMessage({status: 'stylenotexist'});
     return;
@@ -65,18 +47,17 @@ const createThemeFromStyles = (nameTheme:string) => {
   }
 };
 const changeStyleColor = () => {
-  const styleList = getLocalStyle();
+  const styleList = Styles.getLocalStyle();
   if (styleList === null) {
     figma.ui.postMessage({status: 'themenotexist'});
     return;
   }
-  const styleArray = getArrayFromStyles(styleList);
+  const styleArray = Styles.getArrayFromStyles(styleList);
 
   const selection = figma.currentPage.selection;
 
   if (selection.length === 0) {
     figma.ui.postMessage({status: 'themenotexist'});
-    //figma.closePlugin();
     return;
   }
 
@@ -101,4 +82,4 @@ const changeStyleColor = () => {
   }
 }
 
-export { getLocalStyle, createThemeFromStyles, changeStyleColor };
+export { createThemeFromStyles, changeStyleColor };

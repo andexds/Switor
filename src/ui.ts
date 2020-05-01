@@ -1,4 +1,4 @@
-import './ui.css';
+import './ui.scss';
 
 document.getElementById('create').onclick = () => {
     parent.postMessage({ pluginMessage: { type: 'create-theme' } }, '*');
