@@ -1,26 +1,49 @@
 <div class="content">
+  <div class="tabs">
+    <div class="tabs_item tabs_item_left tabs_item_active"><a href="#">Local Style</a></div>
+    <div class="tabs_item tabs_item_left"><a href="#">Global style</a></div>
+    <div class="tabs_item tabs_item_right"><a href="#">Have a problem?</a></div>
+  </div>
   <div class="page page_type-global">
-    <h1>Switors2</h1>
-    <p>Switch light theme to dark has never been easier. Use the instruction and enjoy.</p>
-    <div class="steps">
-      <h2>Use local styles</h2>
-      <p>Create local paint styles and use them in your project</p>
+    <div class="slider slider_name_local">
+      <div class="slider_slide slider_slide_type_active">
+        <img class="slider_image" inline src="src/img/slider_local_1.svg" alt="">
+        <div class="slider_description"><b>How it works.</b> At the first create local styles and use them in your design project</div>
+      </div>
+      <div class="slider_slide">
+        <img class="slider_image" inline src="src/img/slider_local_2.svg" alt="">
+        <div class="slider_description">Click on the <b>Create theme palette</b> to create visualization of styles</div>
+      </div>
+      <div class="slider_slide">
+        <img class="slider_image" inline src="src/img/slider_local_3.svg" alt="">
+        <div class="slider_description">Make a copy of your palette and create new theme, for example <b>dark theme</b></div>
+      </div>
+      <div class="slider_slide">
+        <img class="slider_image" inline src="src/img/slider_local_4.svg" alt="">
+        <div class="slider_description">Select all new colors and click on the <b>Change Colors</b> to change theme</div>
+      </div>
+      <div class="slider_slide">
+        <img class="slider_image" inline src="src/img/slider_local_5.svg" alt="">
+        <div class="slider_description">All pages will change theme from your current style to new selected colors</div>
+      </div>
+      <div class="slider_arrow slider_arrow_type_forward"></div>
+      <div class="slider_arrow slider_arrow_type_backward slider_arrow_hidden"></div>
+    </div>
+    <div class="step">
       <h2>Create new palette</h2>
       <p>Create palette to new theme. <b>Don't forget</b> make copy to keep your default theme</p>
-      <div class="controls">
-        <button id="create">Create theme palette</button>
-        <div class="message" id='message__create'>Ok, you must have local style to create palette</div>
-      </div>
+      
+      <button class="button button_type_secondary" id="create">Create theme palette</button>
+    </div>
+    <div class="step">
       <h2>Change theme</h2>
-      <p>Select all new theme color using CTRL (or CMD for mac) and click "Change Color" for magic</p>
-      <div class="controls">
-        <button id="change">Change Color</button>
-        <div class="message" id='message__change'>First please select some theme colors</div>
-      </div>
+      <p>Select all new theme color using CTRL (or CMD for mac) and click "Change Colors" for magic</p>
+      
+      <button class="button button_type_primary" id="change">Change Colors</button>
+      
     </div>
   </div>
-  <div class="page page_type-local"></div>
+  <div class="page page_type-local page_visible-none">
+    Global type
+  </div>
 </div>
-<footer>
-  If you have a problem or a new idea, just text me <a href="https://fb.com/andexds" target="_blank">fb.com/andexds</a>
-</footer>

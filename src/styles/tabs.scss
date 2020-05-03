@@ -1,0 +1,36 @@
+.tabs {
+  display: flex;
+  justify-content: flex-start;
+
+  background-color: var(--color-bg-primary);
+  padding: 0px 16px;
+  border-bottom: 1px solid var(--color-border);
+
+  &_item {
+    height: 32px;
+    line-height: 32px;
+
+    a {
+      color: var(--color-tab-default);
+      font-weight: 700;
+      text-decoration: none;
+      line-height: 32px;
+
+      &:hover {
+        color: var(--color-tab-active);
+      }
+    }
+
+    &_active a {
+      color: var(--color-tab-active);
+    }
+
+    &_left {
+      margin-right: 12px;
+    }
+    &_right {
+      text-align: right;
+      flex: auto;
+    }
+  }
+}

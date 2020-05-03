@@ -1,6 +1,4 @@
-class Styles {
-
-
+class Style {
   static getLocalStyle = () => {
     const styleList = figma.getLocalPaintStyles();
     return styleList.length === 0 ? null : styleList;
@@ -12,11 +10,6 @@ class Styles {
     });
   };
 
-
-
 }
 
-
-
-
-export default Styles;
+export default Style;

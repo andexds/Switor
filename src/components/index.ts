@@ -1,9 +1,10 @@
-import Styles from './styles/Styles';
+import Style from './style/Style';
 
 const createThemeFromStyles = (nameTheme:string) => {
-  const styleList = Styles.getLocalStyle();
+  const styleList = Style.getLocalStyle();
   if (styleList === null) {
-    figma.ui.postMessage({status: 'stylenotexist'});
+    // figma.ui.postMessage({status: 'stylenotexist'});
+    figma.notify("Ok, you must have local style to create palette");
     return;
   }
   const nodeArray: BaseNode[] = [];
@@ -47,17 +48,17 @@ const createThemeFromStyles = (nameTheme:string) => {
   }
 };
 const changeStyleColor = () => {
-  const styleList = Styles.getLocalStyle();
+  const styleList = Style.getLocalStyle();
   if (styleList === null) {
-    figma.ui.postMessage({status: 'themenotexist'});
+    figma.notify("At first please select some theme colors")
     return;
   }
-  const styleArray = Styles.getArrayFromStyles(styleList);
+  const styleArray = Style.getArrayFromStyles(styleList);
 
   const selection = figma.currentPage.selection;
 
   if (selection.length === 0) {
-    figma.ui.postMessage({status: 'themenotexist'});
+    figma.notify("Ok, you must have local style to create palette");
     return;
   }
 
@@ -74,9 +75,7 @@ const changeStyleColor = () => {
 
       styleList[id].paints = [ fills[0] ];
     } else {
-      //figma.notify('Please select some shape of theme');
-      figma.ui.postMessage({status: 'themenotexist'});
-      //figma.closePlugin();
+      figma.notify("Ok, you must have local style to create palette");
       return;
     }
   }
