@@ -73,18 +73,6 @@ function updateListOfStyle() {
   });
 }
 
-// Очистка localstorage
-function cleanStorage() {
-  figma.clientStorage.setAsync('switor-styles', []).then(() => {
-    console.log('Storage was clean');
-    figma.notify('Storage was clean');
-    figma.clientStorage.getAsync('switor-styles').then((storage) => {
-      console.log(storage);
-      updateListOfStyle();
-    })
-  })
-}
-
 // Создание новой темы из локальных стилей
 function addNewTheme() {
   const localStyle = Style.getLocalStyle().map(({id, name}) => {
@@ -181,7 +169,7 @@ function applyTheme(name) {
   });
 }
 
-// Обновление тем
+// Удаление темы
 function deleteTheme(name) {
   figma.clientStorage.getAsync('switor-styles').then((allThemes) => {
     const newList = allThemes.filter((theme) => {
@@ -198,7 +186,6 @@ export {
   drawThemePalette,
   changeLocalStyleBySelectColors,
   addNewTheme,
-  cleanStorage,
   updateListOfStyle,
   applyTheme,
   deleteTheme

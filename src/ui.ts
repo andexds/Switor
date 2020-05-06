@@ -13,9 +13,7 @@ document.getElementById('changeLocalStyle').onclick = () => {
 document.getElementById('addNewTheme').onclick = () => {
   parent.postMessage({ pluginMessage: { type: 'add-new-theme' } }, '*');
 }
-document.getElementById('cleanStorage').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: 'clean-storage' } }, '*');
-}
+
 const slider1 = new Slider(document.querySelector('.slider_name_local'));
 const slider2 = new Slider(document.querySelector('.slider_name_global'));
 const tab = new Tab(document.querySelector('.tabs'));

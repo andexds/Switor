@@ -3,7 +3,6 @@ import {
   drawThemePalette,
   changeLocalStyleBySelectColors,
   addNewTheme,
-  cleanStorage,
   updateListOfStyle,
   applyTheme,
   deleteTheme
@@ -14,7 +13,6 @@ export {
   drawThemePalette,
   changeLocalStyleBySelectColors,
   addNewTheme,
-  cleanStorage,
   updateListOfStyle,
   applyTheme,
   deleteTheme

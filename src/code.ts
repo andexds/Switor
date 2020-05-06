@@ -2,7 +2,6 @@ import {
   drawThemePalette,
   changeLocalStyleBySelectColors,
   addNewTheme,
-  cleanStorage,
   updateListOfStyle,
   applyTheme,
   deleteTheme
@@ -20,9 +19,6 @@ figma.ui.onmessage = msg => {
   }
   if (msg.type === 'add-new-theme') {
     addNewTheme();
-  }
-  if (msg.type === 'clean-storage') {
-    cleanStorage();
   }
   if (msg.type === 'draw-list') {
     updateListOfStyle();
