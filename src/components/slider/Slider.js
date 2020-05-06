@@ -26,7 +26,6 @@ class Slider {
   }
 
   nextSlide() {
-    console.log(this.currentSlide);
     if (this.currentSlide + 1 < this.countOfSlides) {
       this.sliders[this.currentSlide].classList.remove('slider_slide_type_active');
       this.currentSlide = this.currentSlide + 1;
@@ -36,7 +35,6 @@ class Slider {
   }
 
   prevSlide() {
-    console.log(this.currentSlide);
     if (this.currentSlide > 0) {
       this.sliders[this.currentSlide].classList.remove('slider_slide_type_active');
       this.currentSlide = this.currentSlide - 1;

@@ -1,0 +1,40 @@
+.list {
+  display: flex;
+  flex-direction: column;
+
+  &_item {
+    padding: 8px 16px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+
+    &:hover {
+      background-color: rgba(0,0,0,0.05);
+      .list_buttons {
+        display: flex;
+      }
+    }
+  }
+
+  &_descrition {
+    
+  }
+
+  &_title {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+  }
+
+  &_date {
+    font-size: 12px;
+    color: var(--color-text-primary);
+  }
+
+  &_buttons {
+    // display: flex;
+    flex-direction: row;
+    display: none;
+  }
+
+}

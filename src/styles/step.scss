@@ -2,4 +2,15 @@
   padding: 0 16px;
   margin-top: 16px;
   margin-bottom: 16px;
+
+  &_type_inline {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  &_margin_buttom_s {
+    margin-bottom: 8px;
+  }
 }

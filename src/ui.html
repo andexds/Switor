@@ -1,10 +1,10 @@
 <div class="content">
   <div class="tabs">
-    <div class="tabs_item tabs_item_left tabs_item_active"><a href="#">Local Style</a></div>
-    <div class="tabs_item tabs_item_left"><a href="#">Global style</a></div>
-    <div class="tabs_item tabs_item_right"><a href="#">Have a problem?</a></div>
+    <div class="tabs_item tabs_item_left tabs_item_active"><a href="#page_local-style">Local Style</a></div>
+    <div class="tabs_item tabs_item_left"><a href="#page_global-style">Global style</a></div>
+    <div class="tabs_item tabs_item_right"><a href="#page_have-a-problem">Have a problem?</a></div>
   </div>
-  <div class="page page_type-global">
+  <div class="page page_type-local" id="page_local-style">
     <div class="slider slider_name_local">
       <div class="slider_slide slider_slide_type_active">
         <img class="slider_image" inline src="src/img/slider_local_1.svg" alt="">
@@ -33,17 +33,43 @@
       <h2>Create new palette</h2>
       <p>Create palette to new theme. <b>Don't forget</b> make copy to keep your default theme</p>
       
-      <button class="button button_type_secondary" id="create">Create theme palette</button>
+      <button class="button button_type_secondary" id="drawThemePalette">Create theme palette</button>
     </div>
     <div class="step">
       <h2>Change theme</h2>
       <p>Select all new theme color using CTRL (or CMD for mac) and click "Change Colors" for magic</p>
       
-      <button class="button button_type_primary" id="change">Change Colors</button>
+      <button class="button button_type_primary" id="changeLocalStyle">Change Colors</button>
       
     </div>
   </div>
-  <div class="page page_type-local page_visible-none">
+  <div class="page page_type-global page_visible-none" id="page_global-style">
+    <div class="slider slider_name_global">
+      <div class="slider_slide slider_slide_type_active">
+        <img class="slider_image" inline src="src/img/slider_local_1.svg" alt="">
+        <div class="slider_description"><b>How it works.</b> At the first create local styles and use them in your design project</div>
+      </div>
+      <div class="slider_slide">
+        <img class="slider_image" inline src="src/img/slider_local_3.svg" alt="">
+        <div class="slider_description">Make a copy of your palette and create new theme, for example <b>dark theme</b></div>
+      </div>
+      <div class="slider_slide">
+        <img class="slider_image" inline src="src/img/slider_local_4.svg" alt="">
+        <div class="slider_description">Select all new colors and click on the <b>Change Colors</b> to change theme</div>
+      </div>
+      <div class="slider_arrow slider_arrow_type_forward"></div>
+      <div class="slider_arrow slider_arrow_type_backward slider_arrow_hidden"></div>
+    </div>
+
+    <div class="step step_type_inline step_margin_buttom_s">
+      <h2>Your themes</h2>
+      <div class="button button_type_secondary" id='cleanStorage'>x</div>
+      <button class="button button_type_secondary" id='addNewTheme'>Add new theme</button>
+    </div>
+    <div class="list">
+    </div>
+  </div>
+  <div class="page page_type-have-a-problem page_visible-none" id="page_have-a-problem">
     Global type
   </div>
 </div>

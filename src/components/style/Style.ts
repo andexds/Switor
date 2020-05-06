@@ -9,7 +9,6 @@ class Style {
       return name;
     });
   };
-
 }
 
 export default Style;
