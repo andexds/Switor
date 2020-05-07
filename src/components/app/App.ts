@@ -63,7 +63,7 @@ function drawThemePalette() {
   });
   
   styleList.forEach((style, index) => {
-    nodeArray.push(drawRectangel(style.id, style.name, index));
+    nodeArray.push(drawRectangel(style.paints, style.name, index));
   });
 }
 // Обновление UI листа стилей
@@ -77,7 +77,6 @@ function updateListOfStyle() {
 function addNewTheme() {
   const localStyle = Style.getLocalStyle().map(({id, name}) => {
       return {id: id.split(',')[0].split(':')[1], name};
-      // return {id, name};
   });
   let storageStyles = [];
   figma.clientStorage.getAsync('switor-styles').then((storage) => {
@@ -108,64 +107,95 @@ function addNewTheme() {
   });
 }
 
-// Применение темы к выделенному элементу
-function applyTheme(name) {
+const formatId = (rawid) => rawid.split(',')[0].split(':')[1];
+
+// Получаем ID стиля всех элементов
+// и получаем плоский список всех Node
+const makeObjectWithCurrentIdAndNodes = () => {
   const selections = figma.currentPage.selection;
+  const collectOfNode = {};
 
   if (selections.length === 0) {
     figma.notify('Please select something');
     return;
   }
 
-  const iterOfNode = (selections, allTheme, newTheme) => {
+  const iterOfNode = (selections) => {
     if ('children' in selections) {
       let children = selections.children;
       for (let child of children) {
-        iterOfNode(child, allTheme, newTheme) ;
+        iterOfNode(child) ;
       }
     } else {
-      const currentId = selections.fillStyleId.split(',')[0].split(':')[1];
-      console.log('current: ', currentId);
-
-      const findName = (allTheme) => {
-        let name = '';
-        allTheme.forEach((theme) => {
-          const filtered = theme.style.filter((st) => {
-            return st.id === currentId;
-          });
-          if (filtered.length !== 0) {
-            name = filtered[0].name;
-          }
-        });
-        return name;
-      };
-
-      const nameCurrentColor = findName(allTheme);
-      console.log(nameCurrentColor);
-      console.log(newTheme);
-      if (nameCurrentColor === '') return;
-      const newId = newTheme.style.filter((st) => {
-        return st.name === nameCurrentColor;
-      })[0].id;
-
-      console.log('newID ', newId);
-      figma.importStyleByKeyAsync(newId).then((paint) => {
-        selections.fillStyleId = paint.id;
-      });
+      const currentId = formatId(selections.fillStyleId);
+      collectOfNode[currentId] = collectOfNode[currentId] === undefined ? [selections] : [...collectOfNode[currentId], selections];
     }
   }
 
-  figma.clientStorage.getAsync('switor-styles').then((allThemes) => {
-    const indexNewTheme = _.findIndex(allThemes, (s) => {
-      return s.name === name;
-    });
+  for (let selection of selections) {
+    iterOfNode(selection);
+  }
+  console.log('coool ', collectOfNode);
+  return collectOfNode;
+}
 
-    const newTheme = allThemes[indexNewTheme];
-    for (let selection of selections) {
-      iterOfNode(selection, allThemes, newTheme);
+// Получаем именя цветов текущей темы
+const getNamesOfCurrentId = (collectOfNode, allTheme) => {
+  const keys = Object.keys(collectOfNode);
+  const collectOldIDWithName = {};
+  allTheme.forEach((theme) => {
+    theme.style.forEach((style) => {
+      if (keys.indexOf(style.id) > -1) {
+        collectOldIDWithName[style.name] = style.id;
+      }
+    })
+  });
+
+  console.log('fwefwefwef ', collectOldIDWithName);
+  return collectOldIDWithName;
+}
+
+// Получаем ID новой темы
+const makeObjectWithNewIdAndNode = (collectOldId, newTheme, collectNodes) => {
+
+  const names = Object.keys(collectOldId);
+  const collectNewId = {};
+
+  newTheme.style.forEach((style) => {
+    if (names.indexOf(style.name) > -1) {
+      const id = collectOldId[style.name];
+      const nodes = collectNodes[id];
+
+      collectNewId[style.id] = nodes;
     }
+  });
 
+  console.log('new ', collectNewId);
+  return collectNewId;
+}
+
+// Применение темы к выделенному элементу
+function applyTheme(name) {
+  const currentIdWithNode = makeObjectWithCurrentIdAndNodes();
+
+  figma.clientStorage.getAsync('switor-styles').then((allThemes) => {
+    const newTheme = allThemes.filter((theme) => theme.name === name)[0];
+    const anotherThemes = allThemes.filter((theme) => theme.name !== name);
+
+    const currentIdWithName = getNamesOfCurrentId(currentIdWithNode, anotherThemes);
+    const newIdWithNode = makeObjectWithNewIdAndNode(currentIdWithName, newTheme, currentIdWithNode);
+
+    const ids = Object.keys(newIdWithNode);
+
+    ids.forEach((id) => {
+      figma.importStyleByKeyAsync(String(id)).then((paint) => {
+        newIdWithNode[id].forEach((node) => {
+          node.fillStyleId  = paint.id;
+        });
+      });
+    });
     figma.ui.postMessage({ status: 'wasApply', data: newTheme.name });
+    figma.notify('You are awesome 😍');
   });
 }
 
