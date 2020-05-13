@@ -22,7 +22,6 @@ function changeLocalStyleBySelectColors() {
 
   for (const color of selection) {
     if ('fills' in color) {
-      console.log(color.fills);
       const name = color.name;
       const fills = color.fills;
       const id = styleArray.indexOf(name);
@@ -80,10 +79,8 @@ function addNewTheme() {
   });
   let storageStyles = [];
   figma.clientStorage.getAsync('switor-styles').then((storage) => {
-    console.log('st: ', storage);
     if (storage.length !== 0) {
       storageStyles = storage;
-      console.log(storageStyles);
     }
 
     const name = figma.root.name;
@@ -127,15 +124,17 @@ const makeObjectWithCurrentIdAndNodes = () => {
         iterOfNode(child);
       }
     } else {
-      const currentId = formatId(selections.fillStyleId);
-      collectOfNode[currentId] = collectOfNode[currentId] === undefined ? [selections] : [...collectOfNode[currentId], selections];
+      const currentFillId = formatId(selections.fillStyleId);
+      collectOfNode[currentFillId] = collectOfNode[currentFillId] === undefined ? [{ node: selections, type: 'fill' }] : [...collectOfNode[currentFillId], { node: selections, type: 'fill' }];
+
+      const currentStrokeId = formatId(selections.strokeStyleId);
+      collectOfNode[currentStrokeId] = collectOfNode[currentStrokeId] === undefined ? [{ node: selections, type: 'stroke' }] : [...collectOfNode[currentStrokeId], { node: selections, type: 'stroke' }];
     }
   }
 
   for (let selection of selections) {
     iterOfNode(selection);
   }
-  console.log('coool ', collectOfNode);
   return collectOfNode;
 }
 
@@ -151,7 +150,6 @@ const getNamesOfCurrentId = (collectOfNode, allTheme) => {
     })
   });
 
-  console.log('fwefwefwef ', collectOldIDWithName);
   return collectOldIDWithName;
 }
 
@@ -170,7 +168,6 @@ const makeObjectWithNewIdAndNode = (collectOldId, newTheme, collectNodes) => {
     }
   });
 
-  console.log('new ', collectNewId);
   return collectNewId;
 }
 
@@ -190,7 +187,13 @@ function applyTheme(name) {
     ids.forEach((id) => {
       figma.importStyleByKeyAsync(String(id)).then((paint) => {
         newIdWithNode[id].forEach((node) => {
-          node.fillStyleId  = paint.id;
+          const type = node.type;
+          if (type === 'fill') {
+            node.node.fillStyleId  = paint.id;
+          } else if (type === 'stroke') {
+            node.node.strokeStyleId  = paint.id;
+          }
+          console.log(node.node.name, ' changed color');
         });
       });
     });
