@@ -124,7 +124,7 @@ const makeObjectWithCurrentIdAndNodes = () => {
     if ('children' in selections) {
       let children = selections.children;
       for (let child of children) {
-        iterOfNode(child) ;
+        iterOfNode(child);
       }
     } else {
       const currentId = formatId(selections.fillStyleId);
