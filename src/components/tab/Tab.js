@@ -1,10 +1,14 @@
+var _ = require('lodash');
+
 class Tab {
   constructor(element) {
     const tabs = element.querySelectorAll('.tabs_item');
-
-    tabs.forEach((tab) => {
+    _.each(tabs, (tab) => {
       tab.querySelector('a').addEventListener('click', this.openPage);
     });
+    // tabs.forEach((tab) => {
+    //   tab.querySelector('a').addEventListener('click', this.openPage);
+    // });
   }
 
   openPage(e) {
@@ -14,12 +18,19 @@ class Tab {
     const pages = document.querySelectorAll('.page');
     const tabs = document.querySelectorAll('.tabs .tabs_item');
     
-    tabs.forEach((tab) => {
+    _.each(tabs, (tab) => {
       tab.classList.remove('tabs_item_active');
     });
-    pages.forEach((page) =>  {
+    // tabs.forEach((tab) => {
+    //   tab.classList.remove('tabs_item_active');
+    // });
+
+    _.each(pages, (page) => {
       page.classList.add('page_visible-none');
-    })
+    });
+    // pages.forEach((page) =>  {
+    //   page.classList.add('page_visible-none');
+    // })
 
     page.classList.remove('page_visible-none');
     e.target.parentNode.classList.add('tabs_item_active');

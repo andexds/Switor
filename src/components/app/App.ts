@@ -20,7 +20,8 @@ function changeLocalStyleBySelectColors() {
     return;
   }
 
-  for (const color of selection) {
+  for (let colorIndex = 0; colorIndex >= selection.length; colorIndex += 1) {
+    const color = selection[colorIndex];
     if ('fills' in color) {
       const name = color.name;
       const fills = color.fills;
@@ -36,6 +37,7 @@ function changeLocalStyleBySelectColors() {
       return;
     }
   }
+
 }
 
 // Рисование палитры цветов из локальных стилей
@@ -61,7 +63,8 @@ function drawThemePalette() {
     figma.viewport.scrollAndZoomIntoView([ group ]);
   });
   
-  styleList.forEach((style, index) => {
+
+  _.each(styleList, (style, index) => {
     nodeArray.push(drawRectangel(style.paints, style.name, index));
   });
 }
@@ -120,9 +123,11 @@ const makeObjectWithCurrentIdAndNodes = () => {
   const iterOfNode = (selections) => {
     if ('children' in selections) {
       let children = selections.children;
-      for (let child of children) {
+
+      _.forIn(children, (child) => {
         iterOfNode(child);
-      }
+      })
+
     } else {
       const currentFillId = formatId(selections.fillStyleId);
       collectOfNode[currentFillId] = collectOfNode[currentFillId] === undefined ? [{ node: selections, type: 'fill' }] : [...collectOfNode[currentFillId], { node: selections, type: 'fill' }];
@@ -132,9 +137,11 @@ const makeObjectWithCurrentIdAndNodes = () => {
     }
   }
 
-  for (let selection of selections) {
+
+  _.forIn(selections, (selection) => {
     iterOfNode(selection);
-  }
+  })
+
   return collectOfNode;
 }
 
@@ -142,13 +149,14 @@ const makeObjectWithCurrentIdAndNodes = () => {
 const getNamesOfCurrentId = (collectOfNode, allTheme) => {
   const keys = Object.keys(collectOfNode);
   const collectOldIDWithName = {};
-  allTheme.forEach((theme) => {
-    theme.style.forEach((style) => {
+
+  _.each(allTheme, (theme) => {
+    _.each(theme.style, (style) => {
       if (keys.indexOf(style.id) > -1) {
         collectOldIDWithName[style.name] = style.id;
       }
     })
-  });
+  })
 
   return collectOldIDWithName;
 }
@@ -159,14 +167,14 @@ const makeObjectWithNewIdAndNode = (collectOldId, newTheme, collectNodes) => {
   const names = Object.keys(collectOldId);
   const collectNewId = {};
 
-  newTheme.style.forEach((style) => {
+  _.each(newTheme.style, (style) => {
     if (names.indexOf(style.name) > -1) {
       const id = collectOldId[style.name];
       const nodes = collectNodes[id];
 
       collectNewId[style.id] = nodes;
     }
-  });
+  })
 
   return collectNewId;
 }
@@ -184,9 +192,9 @@ function applyTheme(name) {
 
     const ids = Object.keys(newIdWithNode);
 
-    ids.forEach((id) => {
+    _.each(ids, (id) => {
       figma.importStyleByKeyAsync(String(id)).then((paint) => {
-        newIdWithNode[id].forEach((node) => {
+        _.each(newIdWithNode[id], (node) => {
           const type = node.type;
           if (type === 'fill') {
             node.node.fillStyleId  = paint.id;
