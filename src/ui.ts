@@ -26,11 +26,13 @@ parent.postMessage({ pluginMessage: { type: 'draw-list' } }, '*');
 
 onmessage = (e) => {
   if (e.data.pluginMessage.status === 'drawList') {
+
     const list = document.querySelector('.list');
     list.innerHTML = '';
     console.log("data: ", e.data.pluginMessage.data);
     if (e.data.pluginMessage.data === undefined) {
       console.log('list of style doesn\'t exist');
+      parent.postMessage({ pluginMessage: { type: 'create-storage' } }, '*');
       return;
     }
     _.each(e.data.pluginMessage.data, (style) => {

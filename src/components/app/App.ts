@@ -70,16 +70,24 @@ function drawThemePalette() {
 }
 // Обновление UI листа стилей
 function updateListOfStyle() {
+  // figma.clientStorage.setAsync('switor-styles', undefined).then(() => {
+  //   console.log('stogare was delet');
+  // });
   figma.clientStorage.getAsync('switor-styles').then((storage) => {
     figma.ui.postMessage({ status: 'drawList', data: storage });
   }).catch((e) => {
-    console.log('List of style empty: ', e);
+    console.log('Can\'t load style from storage ', e);
   });
 }
 
 // Создание новой темы из локальных стилей
 function addNewTheme() {
-  const localStyle = Style.getLocalStyle().map(({id, name}) => {
+  const lStyle = Style.getLocalStyle();
+  if (lStyle === null) {
+    figma.notify('You need have local styles');
+    return;
+  }
+  const localStyle = lStyle.map(({id, name}) => {
       return {id: id.split(',')[0].split(':')[1], name};
   });
   let storageStyles = [];
@@ -153,6 +161,7 @@ const getNamesOfCurrentId = (collectOfNode, allTheme) => {
   const collectOldIDWithName = {};
 
   _.each(allTheme, (theme) => {
+    console.log('alltheme', allTheme);
     _.each(theme.style, (style) => {
       if (keys.indexOf(style.id) > -1) {
         collectOldIDWithName[style.name] = style.id;
@@ -188,10 +197,8 @@ function applyTheme(name) {
   figma.clientStorage.getAsync('switor-styles').then((allThemes) => {
     const newTheme = allThemes.filter((theme) => theme.name === name)[0];
     const anotherThemes = allThemes.filter((theme) => theme.name !== name);
-
     const currentIdWithName = getNamesOfCurrentId(currentIdWithNode, anotherThemes);
     const newIdWithNode = makeObjectWithNewIdAndNode(currentIdWithName, newTheme, currentIdWithNode);
-
     const ids = Object.keys(newIdWithNode);
 
     _.each(ids, (id) => {
@@ -225,11 +232,18 @@ function deleteTheme(name) {
   });
 }
 
+function createStorage() {
+  figma.clientStorage.setAsync('switor-styles', []).then(() => {
+    console.log('Storage was create');
+  })
+}
+
 export {
   drawThemePalette,
   changeLocalStyleBySelectColors,
   addNewTheme,
   updateListOfStyle,
   applyTheme,
-  deleteTheme
+  deleteTheme,
+  createStorage
 };

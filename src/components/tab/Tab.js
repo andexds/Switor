@@ -6,9 +6,7 @@ class Tab {
     _.each(tabs, (tab) => {
       tab.querySelector('a').addEventListener('click', this.openPage);
     });
-    // tabs.forEach((tab) => {
-    //   tab.querySelector('a').addEventListener('click', this.openPage);
-    // });
+
   }
 
   openPage(e) {
@@ -21,16 +19,12 @@ class Tab {
     _.each(tabs, (tab) => {
       tab.classList.remove('tabs_item_active');
     });
-    // tabs.forEach((tab) => {
-    //   tab.classList.remove('tabs_item_active');
-    // });
+  
 
     _.each(pages, (page) => {
       page.classList.add('page_visible-none');
     });
-    // pages.forEach((page) =>  {
-    //   page.classList.add('page_visible-none');
-    // })
+   
 
     page.classList.remove('page_visible-none');
     e.target.parentNode.classList.add('tabs_item_active');

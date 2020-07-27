@@ -5,7 +5,8 @@ import {
   addNewTheme,
   updateListOfStyle,
   applyTheme,
-  deleteTheme
+  deleteTheme,
+  createStorage
 } from "./app/App";
 
 
@@ -15,5 +16,6 @@ export {
   addNewTheme,
   updateListOfStyle,
   applyTheme,
-  deleteTheme
+  deleteTheme,
+  createStorage
 };

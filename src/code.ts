@@ -4,7 +4,8 @@ import {
   addNewTheme,
   updateListOfStyle,
   applyTheme,
-  deleteTheme
+  deleteTheme,
+  createStorage
 } from './components/index';
 
 figma.showUI(__html__);
@@ -28,5 +29,8 @@ figma.ui.onmessage = msg => {
   }
   if (msg.type === 'delete-theme') {
     deleteTheme(msg.name);
+  }
+  if (msg.type === 'create-storage') {
+    createStorage();
   }
 }
