@@ -1,6 +1,7 @@
 import Slider from './components/slider/Slider';
 import Tab from './components/tab/Tab';
 import './styles/app.scss';
+var _ = require('lodash');
 
 document.body.classList.add('theme');
 
@@ -27,8 +28,12 @@ onmessage = (e) => {
   if (e.data.pluginMessage.status === 'drawList') {
     const list = document.querySelector('.list');
     list.innerHTML = '';
-
-    e.data.pluginMessage.data.forEach((style) => {
+    console.log("data: ", e.data.pluginMessage.data);
+    if (e.data.pluginMessage.data === undefined) {
+      console.log('list of style doesn\'t exist');
+      return;
+    }
+    _.each(e.data.pluginMessage.data, (style) => {
       const item = document.createElement('div');
       const description = document.createElement('div');
       const listButtons = document.createElement('div');
@@ -70,6 +75,7 @@ onmessage = (e) => {
       item.append(description, listButtons);
       list.append(item);
     });
+
   } else if (e.data.pluginMessage.status === 'wasApply') {
     
     const button = document.querySelector(`.button_apply[data-name='${e.data.pluginMessage.data}']`);

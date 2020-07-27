@@ -72,6 +72,8 @@ function drawThemePalette() {
 function updateListOfStyle() {
   figma.clientStorage.getAsync('switor-styles').then((storage) => {
     figma.ui.postMessage({ status: 'drawList', data: storage });
+  }).catch((e) => {
+    console.log('List of style empty: ', e);
   });
 }
 
