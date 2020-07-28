@@ -131,7 +131,7 @@ const makeObjectWithCurrentIdAndNodes = () => {
   }
 
   const iterOfNode = (selections) => {
-    if ('children' in selections) {
+    if ('children' in selections && selections.type !== 'BOOLEAN_OPERATION') {
       let children = selections.children;
 
       _.forIn(children, (child) => {
