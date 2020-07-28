@@ -119,11 +119,26 @@ function addNewTheme() {
 
 const formatId = (rawid) => rawid.split(',')[0].split(':')[1];
 
+
+function collectUniqNodes(selections, collectOfNode) {
+  const tempCollectOfNode = collectOfNode;
+  const currentFillId = formatId(selections.fillStyleId);
+  if (currentFillId !== undefined) {
+    tempCollectOfNode[currentFillId] = collectOfNode[currentFillId] === undefined ? [{ node: selections, type: 'fill' }] : [...collectOfNode[currentFillId], { node: selections, type: 'fill' }];
+  }
+
+  const currentStrokeId = formatId(selections.strokeStyleId);
+  if (currentStrokeId !== undefined) {
+    tempCollectOfNode[currentStrokeId] = collectOfNode[currentStrokeId] === undefined ? [{ node: selections, type: 'stroke' }] : [...collectOfNode[currentStrokeId], { node: selections, type: 'stroke' }];
+  }
+
+  return tempCollectOfNode;
+}
 // Получаем ID стиля всех элементов
 // и получаем плоский список всех Node
 const makeObjectWithCurrentIdAndNodes = () => {
   const selections = figma.currentPage.selection;
-  const collectOfNode = {};
+  let collectOfNode = {};
 
   if (selections.length === 0) {
     figma.notify('Please select something');
@@ -134,27 +149,22 @@ const makeObjectWithCurrentIdAndNodes = () => {
     if ('children' in selections && selections.type !== 'BOOLEAN_OPERATION') {
       let children = selections.children;
 
+      if (selections.type === 'FRAME') {
+        collectOfNode = collectUniqNodes(selections, collectOfNode);
+      }
       _.forIn(children, (child) => {
         iterOfNode(child);
       })
 
     } else {
-      const currentFillId = formatId(selections.fillStyleId);
-      if (currentFillId !== undefined) {
-        collectOfNode[currentFillId] = collectOfNode[currentFillId] === undefined ? [{ node: selections, type: 'fill' }] : [...collectOfNode[currentFillId], { node: selections, type: 'fill' }];
-      }
-
-      const currentStrokeId = formatId(selections.strokeStyleId);
-      if (currentStrokeId !== undefined) {
-        collectOfNode[currentStrokeId] = collectOfNode[currentStrokeId] === undefined ? [{ node: selections, type: 'stroke' }] : [...collectOfNode[currentStrokeId], { node: selections, type: 'stroke' }];
-      }
+      collectOfNode = collectUniqNodes(selections, collectOfNode);
     }
   }
 
-
   _.forIn(selections, (selection) => {
     iterOfNode(selection);
-  })
+  });
+
   return collectOfNode;
 }
 
@@ -211,28 +221,9 @@ async function findNameById(currentIdWithNode) {
     }).catch(() => {
 
     })));
-    // await Promise.allSettled(chunk[step].map(async(id) => await figma.importStyleByKeyAsync(id).then((style) => {
-    //   console.log('Find style and try import from id: ', id);
-    //   names.push({name: style.name, nodes: currentIdWithNode[id]}) ;
-    // })));
-    // .then((tempNames) => {
-    //   console.log('Part of chunk was done: ', tempNames);
-    //   names = [...tempNames, ...names];
-    //   if (step + 1 <= chunk.length) {
-    //     iter(step + 1);
-    //   }
-    // })
-    // .catch((e) => {
-    //   console.log('ERROR: ', e);
-    //   throw new Error(e);
-      
-    // });
   }
   await iter(0);
   
-  // const names = await Promise.all(ids.map(async(id) => await figma.importStyleByKeyAsync(id).then((style) => {
-  //   return {name: style.name, nodes: currentIdWithNode[id]};
-  // })));
   console.log('Get all styles names by ID: ', names);
   const obj = {};
   _.each(names, (name) => {
