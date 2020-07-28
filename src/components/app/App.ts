@@ -231,6 +231,7 @@ function searchWithoutDefaultTheme(name) {
       const ids = Object.keys(newIdWithNode);
       
       if (ids.length === 0) {
+        figma.ui.postMessage({ status: 'wasApply', data: newTheme.name });
         figma.notify('Can\'t find match styles 😱');
         return;
       }
@@ -267,6 +268,7 @@ function searchWithDefaultTheme(name) {
     const newIdWithNode = makeObjectWithNewIdAndNode(currentIdWithName, newTheme, currentIdWithNode, true);
     const ids = Object.keys(newIdWithNode);
     if (Object.keys(ids).length === 0) {
+      figma.ui.postMessage({ status: 'wasApply', data: newTheme.name });
       figma.notify('🤔Can\'t find the theme selected element. Please try again with unchecked checkbox or contact with us');
       return;
     }
