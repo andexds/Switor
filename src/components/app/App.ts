@@ -198,10 +198,42 @@ const makeObjectWithNewIdAndNode = (collectOldId, newTheme, collectNodes, withDe
 
 async function findNameById(currentIdWithNode) {
   const ids = Object.keys(currentIdWithNode);
+  console.log('Get all IDs: ', ids);
 
-  const names = await Promise.all(ids.map(async(id) => await figma.importStyleByKeyAsync(id).then((style) => {
-    return {name: style.name, nodes: currentIdWithNode[id]};
-  })));
+  let names = [];
+  const chunk = _.chunk(ids, 10);
+  console.log('Divide ids: ', chunk);
+  console.log('Try to get all styles names by ID');
+
+  const iter = async (step) => {
+    await Promise.all(ids.map(async(id) => await figma.importStyleByKeyAsync(id).then((style) => {
+      names.push({name: style.name, nodes: currentIdWithNode[id]});
+    }).catch(() => {
+
+    })));
+    // await Promise.allSettled(chunk[step].map(async(id) => await figma.importStyleByKeyAsync(id).then((style) => {
+    //   console.log('Find style and try import from id: ', id);
+    //   names.push({name: style.name, nodes: currentIdWithNode[id]}) ;
+    // })));
+    // .then((tempNames) => {
+    //   console.log('Part of chunk was done: ', tempNames);
+    //   names = [...tempNames, ...names];
+    //   if (step + 1 <= chunk.length) {
+    //     iter(step + 1);
+    //   }
+    // })
+    // .catch((e) => {
+    //   console.log('ERROR: ', e);
+    //   throw new Error(e);
+      
+    // });
+  }
+  await iter(0);
+  
+  // const names = await Promise.all(ids.map(async(id) => await figma.importStyleByKeyAsync(id).then((style) => {
+  //   return {name: style.name, nodes: currentIdWithNode[id]};
+  // })));
+  console.log('Get all styles names by ID: ', names);
   const obj = {};
   _.each(names, (name) => {
     obj[name.name] = name.nodes;
@@ -212,22 +244,32 @@ async function findNameById(currentIdWithNode) {
 
 // Применение темы к выделенному элементу
 function applyTheme(name) {
+  console.log('Click clack');
   figma.clientStorage.getAsync('switor-type-of-search').then((type) => {
+    console.log('Get checkbox type: ', type);
     if (type) {
       searchWithDefaultTheme(name);
     } else {
       searchWithoutDefaultTheme(name);
     }
+  }).catch((e) => {
+    
   });
 }
 
 function searchWithoutDefaultTheme(name) {
+  console.log("Try to get current Id With Node");
   const currentIdWithNode = makeObjectWithCurrentIdAndNodes();
+  console.log("Get current Id With Node: ", currentIdWithNode);
 
   findNameById(currentIdWithNode).then((nameOfCurrentNode) => {
     figma.clientStorage.getAsync('switor-styles').then((allThemes) => {
+      console.log("Get all themes from storage: ", allThemes);
       const newTheme = allThemes.filter((theme) => theme.name === name)[0];
+      console.log('Try to find theme calls: ', name);
+      console.log("Filter all themes and find nedded: ", newTheme);
       const newIdWithNode = makeObjectWithNewIdAndNode(nameOfCurrentNode, newTheme, nameOfCurrentNode, false);
+      console.log("Get uniq ID from selection: ", newIdWithNode);
       const ids = Object.keys(newIdWithNode);
       
       if (ids.length === 0) {
