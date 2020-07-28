@@ -5,7 +5,9 @@ import {
   updateListOfStyle,
   applyTheme,
   deleteTheme,
-  createStorage
+  createStorage,
+  setTypeOfSearch,
+  setCheckbox
 } from './components/index';
 
 figma.showUI(__html__);
@@ -32,5 +34,11 @@ figma.ui.onmessage = msg => {
   }
   if (msg.type === 'create-storage') {
     createStorage();
+  }
+  if (msg.type === 'searchWithoutDefaultTheme') {
+    setTypeOfSearch(msg.data);
+  }
+  if (msg.type === 'setCheckbox') {
+    setCheckbox();
   }
 }

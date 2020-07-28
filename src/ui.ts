@@ -14,6 +14,18 @@ document.getElementById('changeLocalStyle').onclick = () => {
 document.getElementById('addNewTheme').onclick = () => {
   parent.postMessage({ pluginMessage: { type: 'add-new-theme' } }, '*');
 }
+document.getElementById('iHaveInSwitorDefaultStyle').onchange = (e) => {
+  const target = e.target as HTMLInputElement;
+  parent.postMessage({ pluginMessage: { type: 'searchWithoutDefaultTheme', data: target.checked } }, '*');
+}
+const message = document.getElementById('message');
+message.classList.add('displayNone');
+document.getElementById('whatButton').onmouseenter = () => {
+  message.classList.remove('displayNone');
+}
+document.getElementById('whatButton').onmouseleave = () => {
+  message.classList.add('displayNone');
+}
 
 const slider1 = new Slider(document.querySelector('.slider_name_local'));
 const slider2 = new Slider(document.querySelector('.slider_name_global'));
@@ -23,18 +35,30 @@ const styleMessage = document.getElementById('message__create');
 const themeMessage = document.getElementById('message__change');
 
 parent.postMessage({ pluginMessage: { type: 'draw-list' } }, '*');
+parent.postMessage({ pluginMessage: { type: 'setCheckbox' } }, '*');
 
 onmessage = (e) => {
   if (e.data.pluginMessage.status === 'drawList') {
-
+    const checkboxBlock = document.querySelector('.checkboxBlock');
+    const placeholder = document.querySelector('.placeholder-1');
     const list = document.querySelector('.list');
-    list.innerHTML = '';
-    console.log("data: ", e.data.pluginMessage.data);
+
     if (e.data.pluginMessage.data === undefined) {
       console.log('list of style doesn\'t exist');
       parent.postMessage({ pluginMessage: { type: 'create-storage' } }, '*');
       return;
     }
+
+    if (e.data.pluginMessage.data.length === 0) {
+      checkboxBlock.classList.add('displayNone');
+      placeholder.classList.remove('displayNone');
+      return;
+    } else {
+      checkboxBlock.classList.remove('displayNone');
+      placeholder.classList.add('displayNone');
+    }
+
+    list.innerHTML = '';
     _.each(e.data.pluginMessage.data, (style) => {
       const item = document.createElement('div');
       const description = document.createElement('div');
@@ -53,9 +77,30 @@ onmessage = (e) => {
       buttonDelete.innerText = 'Delete';
       buttonApply.innerText = 'Apply';
 
+      const month = Number(style.date.split('/')[0]);
+      const day = style.date.split('/')[1];
+      const year = style.date.split('/')[2];
+
+      const months = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
+      ];
+
       description.innerHTML = `
         <div class="list_title">${style.name}</div>
-        <div class="list_date">${style.date}</div>`;
+        <div class="list_date">${months[month-1]} ${day}, ${year}</div>`;
+      
+        console.log(style.date);
 
       buttonApply.addEventListener('click', (e) => {
         if (!(e.target instanceof HTMLButtonElement)) {
@@ -86,5 +131,8 @@ onmessage = (e) => {
     }
     console.log('fff: ', button);
     button.innerText = "Apply";
+  } else if (e.data.pluginMessage.status === 'set-checkbox') {
+    const checkbox = document.getElementById('iHaveInSwitorDefaultStyle') as HTMLInputElement;
+    checkbox.checked = Boolean(e.data.pluginMessage.data);
   }
 }

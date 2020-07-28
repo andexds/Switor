@@ -140,10 +140,14 @@ const makeObjectWithCurrentIdAndNodes = () => {
 
     } else {
       const currentFillId = formatId(selections.fillStyleId);
-      collectOfNode[currentFillId] = collectOfNode[currentFillId] === undefined ? [{ node: selections, type: 'fill' }] : [...collectOfNode[currentFillId], { node: selections, type: 'fill' }];
+      if (currentFillId !== undefined) {
+        collectOfNode[currentFillId] = collectOfNode[currentFillId] === undefined ? [{ node: selections, type: 'fill' }] : [...collectOfNode[currentFillId], { node: selections, type: 'fill' }];
+      }
 
       const currentStrokeId = formatId(selections.strokeStyleId);
-      collectOfNode[currentStrokeId] = collectOfNode[currentStrokeId] === undefined ? [{ node: selections, type: 'stroke' }] : [...collectOfNode[currentStrokeId], { node: selections, type: 'stroke' }];
+      if (currentStrokeId !== undefined) {
+        collectOfNode[currentStrokeId] = collectOfNode[currentStrokeId] === undefined ? [{ node: selections, type: 'stroke' }] : [...collectOfNode[currentStrokeId], { node: selections, type: 'stroke' }];
+      }
     }
   }
 
@@ -151,11 +155,10 @@ const makeObjectWithCurrentIdAndNodes = () => {
   _.forIn(selections, (selection) => {
     iterOfNode(selection);
   })
-
   return collectOfNode;
 }
 
-// Получаем именя цветов текущей темы
+// Получаем имена цветов текущей темы
 const getNamesOfCurrentId = (collectOfNode, allTheme) => {
   const keys = Object.keys(collectOfNode);
   const collectOldIDWithName = {};
@@ -173,34 +176,100 @@ const getNamesOfCurrentId = (collectOfNode, allTheme) => {
 }
 
 // Получаем ID новой темы
-const makeObjectWithNewIdAndNode = (collectOldId, newTheme, collectNodes) => {
-
+const makeObjectWithNewIdAndNode = (collectOldId, newTheme, collectNodes, withDefault) => {
   const names = Object.keys(collectOldId);
+  console.log('NEMAS ', names);
   const collectNewId = {};
 
   _.each(newTheme.style, (style) => {
     if (names.indexOf(style.name) > -1) {
-      const id = collectOldId[style.name];
-      const nodes = collectNodes[id];
+      if (withDefault) {
+        const id = collectOldId[style.name];
+        collectNewId[style.id] = collectNodes[id];
+      } else {
+        collectNewId[style.id] = collectNodes[style.name];
+      }
 
-      collectNewId[style.id] = nodes;
     }
   })
 
   return collectNewId;
 }
 
+async function findNameById(currentIdWithNode) {
+  const ids = Object.keys(currentIdWithNode);
+
+  const names = await Promise.all(ids.map(async(id) => await figma.importStyleByKeyAsync(id).then((style) => {
+    return {name: style.name, nodes: currentIdWithNode[id]};
+  })));
+  const obj = {};
+  _.each(names, (name) => {
+    obj[name.name] = name.nodes;
+  })
+  console.log('nnnn ', obj);
+  return obj;
+}
+
 // Применение темы к выделенному элементу
 function applyTheme(name) {
+  figma.clientStorage.getAsync('switor-type-of-search').then((type) => {
+    if (type) {
+      searchWithDefaultTheme(name);
+    } else {
+      searchWithoutDefaultTheme(name);
+    }
+  });
+}
+
+function searchWithoutDefaultTheme(name) {
+  const currentIdWithNode = makeObjectWithCurrentIdAndNodes();
+
+  findNameById(currentIdWithNode).then((nameOfCurrentNode) => {
+    figma.clientStorage.getAsync('switor-styles').then((allThemes) => {
+      const newTheme = allThemes.filter((theme) => theme.name === name)[0];
+      const newIdWithNode = makeObjectWithNewIdAndNode(nameOfCurrentNode, newTheme, nameOfCurrentNode, false);
+      const ids = Object.keys(newIdWithNode);
+      
+      if (ids.length === 0) {
+        figma.notify('Can\'t find match styles 😱');
+        return;
+      }
+      _.each(ids, (id) => {
+        figma.importStyleByKeyAsync(String(id)).then((paint) => {
+          _.each(newIdWithNode[id], (node) => {
+            const type = node.type;
+            if (type === 'fill') {
+              node.node.fillStyleId  = paint.id;
+            } else if (type === 'stroke') {
+              node.node.strokeStyleId  = paint.id;
+            }
+            console.log(node.node.name, ' changed color');
+          });
+        });
+      });
+      figma.ui.postMessage({ status: 'wasApply', data: newTheme.name });
+      figma.notify('You are awesome 😍');
+    });
+    console.log('Without Default ', name);
+  });
+  
+  
+}
+
+function searchWithDefaultTheme(name) {
   const currentIdWithNode = makeObjectWithCurrentIdAndNodes();
 
   figma.clientStorage.getAsync('switor-styles').then((allThemes) => {
     const newTheme = allThemes.filter((theme) => theme.name === name)[0];
     const anotherThemes = allThemes.filter((theme) => theme.name !== name);
     const currentIdWithName = getNamesOfCurrentId(currentIdWithNode, anotherThemes);
-    const newIdWithNode = makeObjectWithNewIdAndNode(currentIdWithName, newTheme, currentIdWithNode);
+  
+    const newIdWithNode = makeObjectWithNewIdAndNode(currentIdWithName, newTheme, currentIdWithNode, true);
     const ids = Object.keys(newIdWithNode);
-
+    if (Object.keys(ids).length === 0) {
+      figma.notify('🤔Can\'t find the theme selected element. Please try again with unchecked checkbox or contact with us');
+      return;
+    }
     _.each(ids, (id) => {
       figma.importStyleByKeyAsync(String(id)).then((paint) => {
         _.each(newIdWithNode[id], (node) => {
@@ -238,6 +307,18 @@ function createStorage() {
   })
 }
 
+function setTypeOfSearch(type) {
+  figma.clientStorage.setAsync('switor-type-of-search', type).then(() => {
+    console.log('type was set');
+  });
+}
+
+function setCheckbox() {
+  figma.clientStorage.getAsync('switor-type-of-search').then((val) => {
+    figma.ui.postMessage({ status: 'set-checkbox', data: val });
+  });
+}
+
 export {
   drawThemePalette,
   changeLocalStyleBySelectColors,
@@ -245,5 +326,7 @@ export {
   updateListOfStyle,
   applyTheme,
   deleteTheme,
-  createStorage
+  createStorage,
+  setTypeOfSearch,
+  setCheckbox
 };

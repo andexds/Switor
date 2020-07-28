@@ -6,7 +6,9 @@ import {
   updateListOfStyle,
   applyTheme,
   deleteTheme,
-  createStorage
+  createStorage,
+  setTypeOfSearch,
+  setCheckbox
 } from "./app/App";
 
 
@@ -17,5 +19,7 @@ export {
   updateListOfStyle,
   applyTheme,
   deleteTheme,
-  createStorage
+  createStorage,
+  setTypeOfSearch,
+  setCheckbox
 };
