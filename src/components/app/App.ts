@@ -7,20 +7,20 @@ function changeLocalStyleBySelectColors() {
   const styleList = Style.getLocalStyle();
 
   if (styleList === null) {
-    figma.notify("At first please select some theme colors");
-    return;
-  }
-
-  const styleArray = Style.getArrayFromStyles(styleList);
-
-  const selection = figma.currentPage.selection;
-
-  if (selection.length === 0) {
     figma.notify("Ok, you must have local style to create palette");
     return;
   }
 
-  for (let colorIndex = 0; colorIndex >= selection.length; colorIndex += 1) {
+  const styleArray = Style.getArrayFromStyles(styleList);
+  console.log('Local styles: ', styleArray);
+  const selection = figma.currentPage.selection;
+
+  if (selection.length === 0) {
+    figma.notify("At first please select some theme colors");
+    return;
+  }
+
+  for (let colorIndex = 0; colorIndex <= selection.length; colorIndex += 1) {
     const color = selection[colorIndex];
     if ('fills' in color) {
       const name = color.name;
