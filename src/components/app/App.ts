@@ -149,7 +149,7 @@ const makeObjectWithCurrentIdAndNodes = () => {
     if ('children' in selections && selections.type !== 'BOOLEAN_OPERATION') {
       let children = selections.children;
 
-      if (selections.type === 'FRAME') {
+      if (selections.type === 'FRAME' || selections.type === 'COMPONENT' || selections.type === 'INSTANCE') {
         collectOfNode = collectUniqNodes(selections, collectOfNode);
       }
       _.forIn(children, (child) => {
